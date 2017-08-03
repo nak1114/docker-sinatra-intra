@@ -24,6 +24,11 @@ require_relative './models/product'
 require_relative './models/tr_list'
 require_relative './models/status'
 
+require_relative './helpers/html_helpers'
+require_relative './helpers/home_helpers'
+require_relative './helpers/tr_list_helpers'
+require_relative './helpers/product_helpers'
+
 require_relative './routes/product_routes'
 require_relative './routes/tr_list_routes'
 require_relative './routes/home_routes'
@@ -69,9 +74,8 @@ class MyApp < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
     
-    also_reload '/myapp/models/*.rb'
-    also_reload '/myapp/routes/*.rb'
     also_reload '/myapp/helpers/*.rb'
+    also_reload '/myapp/models/*.rb'
   end
   
 

@@ -1,5 +1,6 @@
 # Environment
 
+```
 RACK_ENV    developmant
 DB_HOST     127.0.0.1
 DB_USERNAME your database account
@@ -9,6 +10,7 @@ DL_USERNAME your synology account
 DL_PASSWORD your synology pass word
 TR_USERNAME your account
 TR_PASSWORD your password
+```
 
 # install
 

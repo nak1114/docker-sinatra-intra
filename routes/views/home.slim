@@ -1,4 +1,5 @@
-h2 テスト
+h2 ホーム
+
 button#app1 TRtoZip
 label#msg1
 br
@@ -8,6 +9,7 @@ br
 br
 
 == link_to "/tr"
+br
 == link_to "/pdf"
 
 javascript:
@@ -21,7 +23,7 @@ javascript:
       var timer_id=undefined;
       
       function dummy_msg(){
-        ws.send("{}");
+        ws.send('{}');
       }
 
       ws.onopen = function() { 

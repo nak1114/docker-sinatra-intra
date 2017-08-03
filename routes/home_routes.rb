@@ -6,10 +6,15 @@ require 'sinatra/cross_origin'
 require 'sinatra/activerecord'
 require 'sinatra-websocket'
 
+require_relative '../helpers/html_helpers'
+require_relative '../helpers/home_helpers'
+
 module MyAppRoute
 end
 class MyAppRoute::Home < Sinatra::Base
   configure do
+    helpers MyAppHelper::HTML
+    helpers MyAppHelper::Home
 
     register Sinatra::CrossOrigin
     
@@ -23,88 +28,12 @@ class MyAppRoute::Home < Sinatra::Base
     register Sinatra::Reloader
   end
 
-  def link_to(obj, txt=nil)
-    url=obj
-    url="#{request.path_info}/#{obj.id}" if obj.class!=String
-    txt||=url
-    "<a href='#{url}'>#{txt}</a>"
-  end
-
-
   get '/' do
     slim :home
   end
 
   @@messages=[]
   @@mutex=Mutex.new
-
-  def wtest
-    t = Thread.new do
-      curapp=0
-      data=[{
-        action: 'tr',
-          total: 5,
-          complete: 0
-      }]
-      @@mutex.synchronize {
-        @@messages[curapp]=data[curapp]
-      }
-      data[curapp][:total].times do |v|
-        p v
-        data[curapp][:complete]=v
-        senddata=data.to_json
-        p senddata
-        @@mutex.synchronize {
-          settings.sockets.each do |s|
-            s.send(senddata)
-          end
-        }
-        sleep 5
-      end
-      data[curapp][:complete]=data[curapp][:total]
-      senddata=data.to_json
-      @@mutex.synchronize {
-        settings.sockets.each do |s|
-          s.send(senddata)
-        end
-        @@messages[curapp]=nil
-      }
-    end
-  end
-
-  def wtest2
-    t = Thread.new do
-      curapp=1
-      data=[{},{
-        action: 'pdf',
-          total: 30,
-          complete: 0
-      }]
-      @@mutex.synchronize {
-        @@messages[curapp]=data[curapp]
-      }
-      data[curapp][:total].times do |v|
-        p v
-        data[curapp][:complete]=v
-        senddata=data.to_json
-        p senddata
-        @@mutex.synchronize {
-          settings.sockets.each do |s|
-            s.send(senddata)
-          end
-        }
-        sleep 1
-      end
-      data[curapp][:complete]=data[curapp][:total]
-      senddata=data.to_json
-      @@mutex.synchronize {
-        settings.sockets.each do |s|
-          s.send(senddata)
-        end
-        @@messages[curapp]=nil
-      }
-    end
-  end
 
   get '/websocket' do
     if request.websocket? then
@@ -114,12 +43,17 @@ class MyAppRoute::Home < Sinatra::Base
           ws.send(@@messages.to_json)
         end
         ws.onmessage do |msg|
-          p settings.sockets
+          # p settings.sockets
           json = JSON.parse msg
-          if json['action']=='tr'
-            wtest unless @@messages[0]
-          elsif json['action']=='pdf'
-            wtest2 unless @@messages[1]
+          case json['action']
+          when 'tr'
+            t = Thread.new do
+              tr2zip(@@mutex,@@messages) unless @@messages[0]
+            end
+          when 'pdf'
+            t = Thread.new do
+              zip2zip(@@mutex,@@messages) unless @@messages[1]
+            end
           end
         end
         ws.onclose do
