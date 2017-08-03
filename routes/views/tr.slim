@@ -1,0 +1,95 @@
+h2 TrList
+form method='GET' action="#{request.path_info}"
+  input type="text" name="keyword"
+  - @statuses.each do |stat|
+    input[
+      type="checkbox" 
+      name="status[]" 
+      value="#{stat.id}"
+      checked=(params[:status]&&params[:status].index(stat.id.to_s) ? true : false)
+      ]
+        = stat.name+"  "
+  input type="submit" value="検索"
+
+#notify
+
+table
+  thead
+    tr
+      th URL
+      th State
+      th English
+      th Japanese
+      th 更新日
+      th colspan="3" 操作
+  tbody
+    - @pages.each do |page|
+      tr id="page_#{page.id}"
+        td.page_url == link_to page.url,'ここ'
+        td.page_stat = page.status.name
+        td.page_name = page.name
+        td.page_rename 
+          - if page.rename
+            = page.rename
+          - else
+            input type="text" name="rename"
+        td = page.updated_at
+        td == link_to('javascript:put_name('+page.id.to_s+')', '更新')
+        td == link_to('javascript:copy_name('+page.id.to_s+')', 'コピー')
+        td == link_to('javascript:delete_name('+page.id.to_s+')', '削除')
+
+== will_paginate @pages, previous_label: "&laquo;&nbsp;前", next_label: "次&nbsp;&raquo;"
+
+javascript: 
+  var copy_name=function (id){
+    var tr=document.querySelector('#page_'+id);
+    var name=tr.querySelector('.page_name').textContent;
+    tr.querySelector('.page_rename input').value=name;
+  }
+  var put_name=function (id){
+    var tr=document.querySelector('#page_'+id);
+    var url=tr.querySelector('.page_url a').getAttribute('href');
+    var name=tr.querySelector('.page_name').textContent;
+    var rename=tr.querySelector('.page_rename input').value || tr.querySelector('.page_rename').value ;
+    var x={
+      url: url,
+      name: rename
+    };
+    fetch(location.pathname+'/'+id, {
+      method: 'PUT',
+      body: JSON.stringify(x),
+    })
+    .then(function (res) {
+      return(res.json());
+    })
+    .then(function (res) {
+      var tr=document.querySelector('#notify');
+      tr.textContent=res.message;
+    })
+    .catch(function (error) {
+      alert(error);
+    });
+  }
+  var delete_name=function (id){
+    var tr=document.querySelector('#page_'+id);
+    var name=tr.querySelector('.page_name').textContent;
+    var rename=tr.querySelector('.page_rename').value || tr.querySelector('.page_rename input').value ;
+    alert('本当に削除しますか？')
+    var x={
+      name: rename
+    };
+    fetch(location.pathname+'/'+id, {
+      method: 'DELETE',
+      body: JSON.stringify(x),
+    })
+    .then(function (res) {
+      return(res.json());
+    })
+    .then(function (res) {
+      var tr=document.querySelector('#notify');
+      tr.textContent=res.message;
+    })
+    .catch(function (error) {
+      alert(error);
+    });
+  }

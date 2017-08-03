@@ -1,0 +1,23 @@
+commands:
+  dbash: naktak/webapi
+  dirb: naktak/webapi
+  drake: naktak/webapi
+  druby: naktak/webapi
+  word: naktak/webapi
+images:
+  naktak/webapi:
+    tag: ""
+    fake: false
+    script: |
+      docker run --rm -it -p 3000:3000 -v "%CD%":/myapp webapi {{.Envs.cmd}} %*
+    commands:
+      dbash:
+        cmd: /bin/bash
+      dirb:
+        cmd: bundle exec irb
+      drake:
+        cmd: bundle exec rake
+      druby:
+        cmd: bundle exec ruby
+      word:
+        cmd: bundle exec ruby bin/word.rb

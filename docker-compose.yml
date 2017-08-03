@@ -1,0 +1,14 @@
+version: '2'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: bundle exec ruby app.rb -p 3000 -o 0.0.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/myapp
+      - /public/dl:/dl
+    environment:
+      SINATRA_ENV: development
