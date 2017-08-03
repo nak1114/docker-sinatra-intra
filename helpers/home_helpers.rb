@@ -45,10 +45,10 @@ module MyAppHelper::Home
       settings.sockets.each do |s|
         s.send(senddata)
       end
-      messages[1]=nil
+      messages[0]=nil
     }
   rescue => e
-    messages[1]=nil
+    messages[0]=nil
     puts e.message
   end
 
