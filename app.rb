@@ -46,7 +46,7 @@ class String
     return pstr
   end
   def to_fname
-    self.tr(Tr_src,Tr_dst)
+    self.gsub(/[[:cntrl:]]/, '').tr(Tr_src,Tr_dst).strip
   end
 end
 
