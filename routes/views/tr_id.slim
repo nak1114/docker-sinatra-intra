@@ -1,0 +1,28 @@
+h2 TrList #{@page.id}
+
+== link_to '/tr', '一覧へ戻る'
+br
+== link_to "#{request.path_info}","編集しなおし"
+br
+
+form method='POST' action="#{request.path_info}"
+  label 英語名
+  input type="text" name="name" value="#{@page.name}"
+  br
+  label 日本語名
+  input type="text" name="rename" value="#{@page.rename}"
+  br
+  select name="status"
+    - @statuses.each do |stat|
+      option[
+        value="#{stat.id}"
+        selected=(@page.status_id==stat.id ? true : false)
+      ]
+        = stat.name
+  br
+  input type="checkbox" name="dl" checked="" label 保留/重複で日本語名ありの時再DL？
+  br
+  input type="submit" value="変更"
+  br
+  br
+#notify

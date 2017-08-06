@@ -20,25 +20,22 @@ table
       th State
       th English
       th Japanese
-      th 更新日
-      th colspan="3" 操作
+      th colspan="2" 操作
   tbody
     - @pages.each do |page|
-      tr id="page_#{page.id}"
+      tr id="page_#{page.id}" data-url="#{page.url}" data-status="#{page.status_id}" data-name="#{page.name}" data-rename="#{page.rename}"
         td.page_url == link_to page.url,'ここ'
-        td.page_stat = page.status.name
-        td.page_name = page.name
-        td.page_rename 
-          - if page.rename
-            = page.rename
-          - else
-            input type="text" name="rename"
-        td = page.updated_at
-        td == link_to('javascript:put_name('+page.id.to_s+')', '更新')
-        td == link_to('javascript:copy_name('+page.id.to_s+')', 'コピー')
-        td == link_to('javascript:delete_name('+page.id.to_s+')', '削除')
+        td.page_stat   = page.status.name
+        td.page_name   = page.name
+        td.page_rename = page.rename
+        td == link_to(page,'編集')
+        td == link_to(%(javascript:post_name("POST",#{page.id.to_s},"/reload")), '再DL')
 
 == will_paginate @pages, previous_label: "&laquo;&nbsp;前", next_label: "次&nbsp;&raquo;"
+
+br
+== link_to('/','ホームへ戻る')
+
 
 javascript: 
   var copy_name=function (id){
@@ -46,40 +43,19 @@ javascript:
     var name=tr.querySelector('.page_name').textContent;
     tr.querySelector('.page_rename input').value=name;
   }
-  var put_name=function (id){
+  var post_name=function (method,id,post){
     var tr=document.querySelector('#page_'+id);
     var url=tr.querySelector('.page_url a').getAttribute('href');
     var name=tr.querySelector('.page_name').textContent;
-    var rename=tr.querySelector('.page_rename input').value || tr.querySelector('.page_rename').value ;
+    var rename=tr.querySelector('.page_rename').textContent;
+    if(method=='DELETE'){alert('本当に削除しますか？')}
     var x={
       url: url,
-      name: rename
+      old: name,
+      name: rename,
     };
-    fetch(location.pathname+'/'+id, {
-      method: 'PUT',
-      body: JSON.stringify(x),
-    })
-    .then(function (res) {
-      return(res.json());
-    })
-    .then(function (res) {
-      var tr=document.querySelector('#notify');
-      tr.textContent=res.message;
-    })
-    .catch(function (error) {
-      alert(error);
-    });
-  }
-  var delete_name=function (id){
-    var tr=document.querySelector('#page_'+id);
-    var name=tr.querySelector('.page_name').textContent;
-    var rename=tr.querySelector('.page_rename').value || tr.querySelector('.page_rename input').value ;
-    alert('本当に削除しますか？')
-    var x={
-      name: rename
-    };
-    fetch(location.pathname+'/'+id, {
-      method: 'DELETE',
+    fetch(location.pathname+'/'+id+post, {
+      method: method,
       body: JSON.stringify(x),
     })
     .then(function (res) {

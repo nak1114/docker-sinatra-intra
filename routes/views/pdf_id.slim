@@ -1,0 +1,28 @@
+h2 PdfList #{@page.id}
+
+== link_to '/pdf', '一覧へ戻る'
+br
+== link_to "#{request.path_info}","編集しなおし"
+br
+
+form method='POST' action="#{request.path_info}"
+  label 原題
+  input type="text" name="name" value="#{@page.name}"
+  br
+  label 改題
+  input type="text" name="rename" value="#{@page.rename}"
+  br
+  select name="status"
+    - @statuses.each do |stat|
+      option[
+        value="#{stat.id}"
+        selected=(@page.status_id==stat.id ? true : false)
+      ]
+        = stat.name
+  br
+  input type="checkbox" name="dl" checked="" 保留/重複の時再DL？
+  br
+  input type="submit" value="変更"
+  br
+  br
+#notify
