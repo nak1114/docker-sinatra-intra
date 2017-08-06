@@ -7,32 +7,27 @@ module MyAppHelper::TrList
   Tr_password=ENV['TR_PASSWORD']
   Tr_dir='/dl/tr/'
 
-  def dl_tr(url,name=nil)
+  def dl_tr(url,name='')
     browser = Mechanize.new
     browser.user_agent_alias = 'Windows IE 9'
     browser.verify_mode = OpenSSL::SSL::VERIFY_NONE
     browser.cookie_jar.load Tr_cookie_path if File.exist? Tr_cookie_path
-    begin
       pg=browser.get(url)
-    rescue Mechanize::ResponseCodeError => e
-      return {action: :site_err,code: e.response_code}
-    end 
 
     ename=pg.search('#info h1').text
     jname=pg.search('#info h2').text
     utime=pg.at('time')[:datetime]
+    jname=name if name.size > 4
     ret={
       ename: ename,
       jname: jname,
       utime: DateTime.parse(utime),
     }
 
-    jname=name if name && name.size > 4
+    if( jname.size < 5)
+      return {action: :no_name}.merge(ret.delete(:jname))
+    end
     unless name
-      if( jname.size < 5)
-        return {action: :no_name}.merge(ret)
-      end
-
       if TrList.where(rename: jname).exists?
         return {action: :dup}.merge(ret)
       end
@@ -64,6 +59,8 @@ module MyAppHelper::TrList
     end
     File.binwrite(pname,bbb.bencode)
     return {action: :ok}.merge(ret)
+  rescue Mechanize::ResponseCodeError => e
+    return {action: :site_err,code: e.response_code}
   end
 end
 
