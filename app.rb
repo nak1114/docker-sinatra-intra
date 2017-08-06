@@ -74,8 +74,7 @@ class MyApp < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
     
-    also_reload '/myapp/helpers/*.rb'
-    also_reload '/myapp/models/*.rb'
+    also_reload '/myapp/**/*.rb'
   end
   
 
