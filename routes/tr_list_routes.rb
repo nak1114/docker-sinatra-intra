@@ -7,11 +7,13 @@ require 'sinatra/activerecord'
 require 'will_paginate/view_helpers/sinatra'
 require 'will_paginate/active_record'
 
+require_relative '../helpers/html_helpers'
 require_relative '../helpers/tr_list_helpers'
 module MyAppRoute
 end
 class MyAppRoute::TrList < Sinatra::Base
   configure do
+    helpers MyAppHelper::HTML
     helpers MyAppHelper::TrList
     helpers WillPaginate::Sinatra, WillPaginate::Sinatra::Helpers
 
@@ -95,11 +97,6 @@ class MyAppRoute::TrList < Sinatra::Base
     end
   end
 
-  def link_to(obj, txt=nil)
-    url=obj
-    url="#{request.path_info}/#{obj.id}" if obj.class!=String
-    txt||=url
-    "<a href='#{url}'>#{txt}</a>"
   end
 
   put '/tr/:id' do

@@ -7,11 +7,13 @@ require 'sinatra/activerecord'
 require 'will_paginate/view_helpers/sinatra'
 require 'will_paginate/active_record'
 
+require_relative '../helpers/html_helpers'
 require_relative '../helpers/product_helpers'
 module MyAppRoute
 end
 class MyAppRoute::Product < Sinatra::Base
   configure do
+    helpers MyAppHelper::HTML
     helpers MyAppHelper::Product
     helpers WillPaginate::Sinatra, WillPaginate::Sinatra::Helpers
 
@@ -25,12 +27,6 @@ class MyAppRoute::Product < Sinatra::Base
     register Sinatra::Reloader
   end
 
-  def link_to(obj, txt=nil)
-    url=obj
-    url="#{request.path_info}/#{obj.id}" if obj.class!=String
-    txt||=url
-    "<a href='#{url}'>#{txt}</a>"
-  end
 
   get '/pdf' do
     #@pages=TrList.all.limit(10)
