@@ -1,0 +1,29 @@
+tr
+正常系
+create 'post /tr'
+update 'post /tr/id'
+reload 'post /tr/id/reload'
+get '/tr'
+get '/tr/id'
+ネーム重複
+
+異常系
+サイトエラー
+#info h2 がない場合
+dl/tr重複
+dl/zip/tr重複
+
+pdf
+正常系
+create 'post /pdf'
+update 'post /pdf/id'
+reload 'post /pdf/id/reload'
+get '/pdf'
+get '/pdf/id'
+ネーム重複でリネーム
+
+異常系
+サイトエラー
+Stationエラー
+dl/pdf重複
+dl/zip/pdf重複
