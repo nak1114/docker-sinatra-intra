@@ -18,7 +18,7 @@ module MyAppHelper::Product
     sidb=JSON.parse(res)
     sid=sidb["data"]["sid"]
 
-    ppara["uri"]=id.sub('/item/','/item/dl_zip/')
+    ppara["uri"]=url.sub('/item/','/item/dl_zip/')
     ppara["destination"]=Dest_base+name
     ppara["_sid"]=sid
     pres= Net::HTTP.post_form(URI.parse(Purl),ppara)
