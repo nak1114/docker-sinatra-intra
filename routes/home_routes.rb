@@ -26,6 +26,7 @@ class MyAppRoute::Home < Sinatra::Base
   end
   configure :development do
     register Sinatra::Reloader
+    also_reload '/myapp/**/*.rb'
   end
 
   get '/' do
