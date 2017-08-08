@@ -126,7 +126,7 @@ class MyAppRoute::Product < Sinatra::Base
       name=@page.rename
       name=@page.name if name==nil || name==''
       name=name.to_fname
-      ret=dl(page.url,name)
+      ret=dl(@page.url,name)
       if ret["success"]
         @page.update({status_id: 1})
       else
