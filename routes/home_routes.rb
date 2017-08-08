@@ -40,6 +40,7 @@ class MyAppRoute::Home < Sinatra::Base
       request.websocket do |ws|
         ws.onopen do
           settings.sockets << ws
+          @@messages[2]=get_dirinfo()
           ws.send(@@messages.to_json)
         end
         ws.onmessage do |msg|
@@ -48,11 +49,11 @@ class MyAppRoute::Home < Sinatra::Base
           case json['action']
           when 'tr'
             t = Thread.new do
-              tr2zip(@@mutex,@@messages) unless @@messages[0]
+              tr2zip(@@mutex,@@messages,json) unless @@messages[0]
             end
           when 'pdf'
             t = Thread.new do
-              zip2zip(@@mutex,@@messages) unless @@messages[1]
+              zip2zip(@@mutex,@@messages,json) unless @@messages[1]
             end
           end
         end
