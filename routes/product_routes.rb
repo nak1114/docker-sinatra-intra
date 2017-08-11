@@ -79,7 +79,7 @@ class MyAppRoute::Product < Sinatra::Base
     end
     return {
       warn: '無効',
-      status: 'StationError',
+      status: ret[:message],
       title: name,
       url: params['url'],
     }.to_json

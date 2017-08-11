@@ -8,6 +8,11 @@ module MyAppHelper::Product
   Dest_base="public/dl/pdf/"
   Pdf_dir='/dl/pdf/'
   def dl(url,name)
+    browser = Mechanize.new
+    browser.user_agent_alias = 'Windows IE 9'
+    pg=browser.get(url)
+    dl_url=pg.at('meta[name="twitter:image:src"]')[:content].sub(%r![^/]+\z!,'item.zip')
+
     ppara={api: "SYNO.DownloadStation.Task",
            version: "3",
            method: "create",
@@ -18,9 +23,7 @@ module MyAppHelper::Product
     sidb=JSON.parse(res)
     sid=sidb["data"]["sid"]
 
-    #ppara["uri"]=url.sub('/item/','/item/dl_zip/')
-
-    ppara["uri"]=url.sub('http://','http://item2.').sub('/item/','/')+'/item.zip'
+    ppara["uri"]=dl_url
     ppara["destination"]=Dest_base+name
     ppara["_sid"]=sid
 
@@ -28,8 +31,11 @@ module MyAppHelper::Product
 
     res = Net::HTTP.get(URI.parse(Tlogout+sid))
 
-    JSON.parse(pres.body)
-    #{"success": true}
+    ret=JSON.parse(pres.body).merge({action: :registed})
+    return ret if ret['success']
+    return ret.merge({message: 'StationError'})
+  rescue Mechanize::ResponseCodeError => e
+    return {action: :site_err,code: e.response_code, message: 'SiteError:'+e.response_code}
   end
 
 end
