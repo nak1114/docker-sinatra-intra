@@ -10,10 +10,13 @@ RUN apt-get update -qq \
  && gem install bundler
 
 ENV APP_HOME /myapp
-WORKDIR $APP_HOME
+WORKDIR /tmp
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
 RUN bundle install
+
+WORKDIR $APP_HOME
 ADD . $APP_HOME
+RUN cp -f /tmp/Gemfile.lock $APP_HOME
 
 CMD bundle exec ruby app.rb

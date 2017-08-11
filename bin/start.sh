@@ -1,4 +1,5 @@
-#!bash
-docker build -t webapi:$1 .
-docker tag webapi:$1 webapi:latest
-docker run --rm -it -v `pwd`:/myapp webapi bundle install
+#!/bin/bash
+name=$(basename `pwd`)
+docker build -t $name:$1 .
+docker tag $name:$1 $name:latest
+docker run --rm -v "$(pwd)":/myapp $name cp -pf /tmp/Gemfile.lock /myapp
