@@ -25,7 +25,7 @@ module MyAppHelper::TrList
     }
 
     if( jname.size < 5)
-      return {action: :no_name}.merge(ret.delete(:jname))
+      return {action: :no_name}.merge(ret)
     end
     unless name
       if TrList.where(rename: jname).exists?
