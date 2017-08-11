@@ -36,7 +36,7 @@ class MyAppRoute::Home < Sinatra::Base
   @@messages=[]
   @@mutex=Mutex.new
 
-  get '/websocket' do
+  get '/websocket.ws' do
     if request.websocket? then
       request.websocket do |ws|
         ws.onopen do
