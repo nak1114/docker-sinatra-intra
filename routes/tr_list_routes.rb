@@ -90,9 +90,9 @@ class MyAppRoute::TrList < Sinatra::Base
     page=TrList.find(id.to_i)
     #page=TrList.find(params['id'].to_i)
     ret=dl_tr(page.url)
-    columns={}
-    columns[:name]=ret[:code] || ret[:ename]
-    columns[:rename]=ret[:jname] if ret[:jname]
+    colums={}
+    colums[:name]=ret[:code] || ret[:ename]
+    colums[:rename]=ret[:jname] if ret[:jname]
     case ret[:action]
     when :site_err
       page.update(colums.merge({status_id: 2}))
