@@ -29,8 +29,8 @@ else
   end
 
   desc "run 'bash' in docker"
-  task :bash , ['cmd']  do |task, args|
-    sh("#{docker_run} /bin/bash #{args[:cmd]}")
+  task :bash  do |task, args|
+    sh("#{docker_run} /bin/bash")
   end
 
   desc "run 'pry' in docker"
