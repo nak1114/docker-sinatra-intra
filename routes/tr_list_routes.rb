@@ -104,7 +104,7 @@ class MyAppRoute::TrList < Sinatra::Base
       page.update(colums.merge({status_id: 4}))
       return {
         error:  'エラー',
-        message: '名前が無効:'+ret[:jname],
+        message: "名前が無効:#{ret[:ename]} : "+ret[:jname],
       }.to_json
     when :dup
       page.update(colums.merge({status_id: 5}))
