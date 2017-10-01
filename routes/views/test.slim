@@ -1,0 +1,131 @@
+h2 ホーム
+
+button#app1 TRtoZip
+label#msg1
+label dir:
+input#input1 type="text" autocomplete="on" list="list1"
+datalist#list1
+label#cnt1
+br
+button#app2 Pdf2Zip 
+label#msg2
+label dir:
+input#input2 type="text" autocomplete="on" list="list2"
+datalist#list2
+label#cnt2
+br
+button#app3 Test 
+label#msg3
+label test:
+input#input3 type="text"
+label#cnt3
+br
+br
+
+== link_to "/tr"
+br
+== link_to "/pdf"
+br
+  
+javascript:
+  (function (){
+    var dirinfo=function(v){
+      console.log(v);
+      var input1=document.getElementById("input1");
+      var list1=document.getElementById("list1");
+      var cnt1=document.getElementById("cnt1");
+      v["data"].forEach(function(val){
+        let option=document.createElement("option");
+        option.setAttribute("value",val["dir"]);
+        option.setAttribute("label",val["count"]);
+        list1.appendChild(option);
+      });
+      var val=v["data"][v["trcur"]]
+      if(!input1.value){
+        input1.value=val["dir"];
+      }
+      cnt1.textContent='('+v["trcount"]+')->('+val["count"]+')';
+
+      var input2=document.getElementById("input2");
+      var list2=document.getElementById("list2");
+      var cnt2=document.getElementById("cnt2");
+      v["data"].forEach(function(val){
+        let option=document.createElement("option");
+        option.setAttribute("value",val["dir"]);
+        option.setAttribute("label",val["count"]);
+        list2.appendChild(option);
+      });
+      var val=v["data"][v["pdfcur"]]
+      if(!input2.value){
+        input2.value=val["dir"];
+      }
+      cnt2.textContent='('+v["pdfcount"]+')->('+val["count"]+')';
+    }
+    var connect = function(){
+      var msg1=document.getElementById("msg1");
+      var msg2=document.getElementById("msg2");
+      var btn1=document.getElementById("app1");
+      var btn2=document.getElementById("app2");
+      var btn3=document.getElementById("app3");
+      var ws = new WebSocket('wss://' + window.location.host + "/websocket.ws");
+      var timer_id=undefined;
+      
+      function dummy_msg(){
+        ws.send('{}');
+      }
+
+      ws.onopen = function() { 
+        console.log("connection opened");
+        if(timer_id==undefined){
+          timer_id=setInterval(dummy_msg,20000);
+        }
+      }
+      ws.onclose = function() { 
+        console.log("connection closed");
+        //setTimeout(function() {connect();}, 1000);
+        if(timer_id!=undefined){
+          clearInterval(timer_id);
+          timer_id=undefined;
+        }
+      }
+      ws.onmessage = function(m) {
+        console.log(m);
+        var json=JSON.parse(m.data);
+        json.forEach(function(v){
+          if(v){
+            switch (v['action']){
+              case 'tr':
+                msg1.textContent=' '+v['complete']+'/'+v['total'];
+              break;
+              case 'pdf':
+                msg2.textContent=' '+v['complete']+'/'+v['total'];
+              break;
+              case 'dirinfo':
+                dirinfo(v);
+              break;
+            }
+          }
+        });
+      }
+
+      btn1.onclick = function(){
+        var list=document.getElementById("input1");
+        var msg={action: "tr",dir: list.value}
+        ws.send(JSON.stringify(msg));
+        return false;
+      }
+      btn2.onclick = function(){
+        var list=document.getElementById("input2");
+        var msg={action: "pdf",dir: list.value}
+        ws.send(JSON.stringify(msg));
+        return false;
+      }
+      btn3.onclick = function(){
+        var list=document.getElementById("input3");
+        var msg={action: "test",dir: list.value}
+        ws.send(JSON.stringify(msg));
+        return false;
+      }
+    }
+    window.onload=connect();
+  })();

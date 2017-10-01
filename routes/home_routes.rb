@@ -33,6 +33,10 @@ class MyAppRoute::Home < Sinatra::Base
     slim :home
   end
 
+  get '/test.html' do
+    slim :test
+  end
+
   @@messages=[]
   @@mutex=Mutex.new
 
@@ -56,6 +60,8 @@ class MyAppRoute::Home < Sinatra::Base
             t = Thread.new do
               zip2zip(@@mutex,@@messages,json) unless @@messages[1]
             end
+          when 'test'
+            WorkerQueue.push json
           end
         end
         ws.onclose do

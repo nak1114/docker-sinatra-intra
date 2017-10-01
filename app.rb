@@ -9,6 +9,7 @@ require 'sinatra/activerecord'
 require 'will_paginate/view_helpers/sinatra'
 require 'will_paginate/active_record'
 require 'sinatra-websocket'
+require 'thread'
 
 require 'json'
 require 'uri'
@@ -87,6 +88,16 @@ class MyApp < Sinatra::Base
 end
 
 if $0 == __FILE__
+  WorkerQueue = Queue.new
+  EM::defer do
+    loop do
+      job = WorkerQueue.shift ## ジョブ1つ取り出す
+      ## job処理する
+      pp job
+      sleep 20
+    end
+  end
+
   MyApp.run!
 end
 
