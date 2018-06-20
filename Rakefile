@@ -12,7 +12,7 @@ else
 #in host
 
   name=File.basename(Dir.pwd)
-  docker_run=%(docker run --rm -it -v "#{Dir.pwd}":/myapp -e RACK_ENV=development #{name})
+  docker_run=%(docker run --rm -it -v "#{Dir.pwd}":/myapp -e RACK_ENV=development #{ENV['DOCKER_OPT']} #{name})
 
   desc "build new docker image"
   task :build , ['tag']  do |task, args|
