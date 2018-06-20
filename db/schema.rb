@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727223917) do
+ActiveRecord::Schema.define(version: 20180620092018) do
 
   create_table "products", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "url", null: false
@@ -40,6 +40,15 @@ ActiveRecord::Schema.define(version: 20170727223917) do
     t.index ["url"], name: "index_tr_lists_on_url", unique: true
   end
 
+  create_table "tv_lists", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.text "name", null: false
+    t.bigint "status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status_id"], name: "index_tv_lists_on_status_id"
+  end
+
   add_foreign_key "products", "statuses"
   add_foreign_key "tr_lists", "statuses"
+  add_foreign_key "tv_lists", "statuses"
 end
