@@ -1,0 +1,32 @@
+link rel="stylesheet" type="text/css" href="table.css"
+
+h2 TVList
+
+br
+== link_to('/tv?sort=name','名前順')
+text 　
+== link_to('/tv','時間順')
+text 　
+== link_to('/tv/list','リスト一覧')
+br
+div ほげ
+div = @pa
+form method='POST'
+  button type='submit' name='action' value='add' 追加
+  button type='submit' name='action' value='sort' フォルダ分け
+  table
+    thead
+      tr
+        th タイトル
+    tbody
+      - @list.each do |filename|
+        tr 
+          td.page_name.left   
+            input type="checkbox" name="list[]" value="#{CGI.escape(filename)}"  = filename
+
+br
+== link_to('/','ホームへ戻る')
+
+javascript: 
+  var copy_name=function (id){
+  }
