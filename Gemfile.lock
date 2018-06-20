@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/nak1114/ariblib.git
+  revision: 57202559cce15013b1b13e78715c8dd91a092209
+  specs:
+    ariblib (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -29,6 +35,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.8.6)
+    levenshtein (0.2.2)
     mechanize (2.7.5)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0)
@@ -105,7 +112,9 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  ariblib!
   bencode
+  levenshtein
   mechanize
   mysql2
   nokogiri
@@ -121,4 +130,4 @@ DEPENDENCIES
   will_paginate
 
 BUNDLED WITH
-   1.15.3
+   1.16.2

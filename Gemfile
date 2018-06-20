@@ -16,3 +16,5 @@ gem 'will_paginate'
 gem 'thin'
 gem 'sinatra-websocket'
 gem 'pry'
+gem 'ariblib', github: "nak1114/ariblib"
+gem 'levenshtein'
