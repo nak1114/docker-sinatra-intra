@@ -56,7 +56,7 @@ class MyAppRoute::Product < Sinatra::Base
     pd.status_id=1
     
     json = if dup>0
-      params['rename']=name+(dup+1).to_s
+      params['rename']=name+' - '+(dup+1).to_s
       pd.rename=params['rename']
       name=params['rename']
       {
