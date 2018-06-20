@@ -37,8 +37,12 @@ td {
   border-bottom: 1px solid #84b2e0;
   border-left: 1px solid #84b2e0;
   text-align: center;
-    box-shadow: 2px 2px 1px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 1px rgba(0,0,0,0.1);
 }
+td.left {
+  text-align: left;
+}
+
 tr td:last-child {
   border-right: 1px solid #84b2e0;
 
