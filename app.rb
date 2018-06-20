@@ -23,6 +23,7 @@ require 'bencode'
 
 require_relative './models/product'
 require_relative './models/tr_list'
+require_relative './models/tv_list'
 require_relative './models/status'
 
 require_relative './helpers/html_helpers'
@@ -33,6 +34,7 @@ require_relative './helpers/product_helpers'
 require_relative './routes/product_routes'
 require_relative './routes/tr_list_routes'
 require_relative './routes/home_routes'
+require_relative './routes/tv_routes'
 
 require 'pp'
 
@@ -62,6 +64,7 @@ class MyApp < Sinatra::Base
     use MyAppRoute::Product
     use MyAppRoute::TrList
     use MyAppRoute::Home
+    use MyAppRoute::TVList
 
     register Sinatra::ActiveRecordExtension
     register Sinatra::CrossOrigin
