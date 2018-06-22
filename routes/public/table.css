@@ -3,6 +3,15 @@ font-family:"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メ�
 padding:10px 0 20px 0;
 background:#fff;
 }
+p.info{
+  background-color:#8ff;
+}
+p.debug{
+  background-color:rgb(255, 246, 124);
+}
+p.error{
+  background-color:rgb(255, 119, 119);
+}
 table {
   width: auto;
     *border-collapse: collapse;

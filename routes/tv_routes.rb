@@ -41,29 +41,21 @@ class MyAppRoute::TVList < Sinatra::Base
 
 
   post '/tv' do
-    @pa= params.to_s
+    @pa= params
+    @list=tv_flist
     flist=[]
     if params[:list]
       flist=params[:list].map{|v| CGI.unescape(v)}
     end
-#    @title_list=TvList.create(:status).order(:updated_at).reverse_order
 
     if params[:action]=="sort"
       t = Thread.new do
-        tv_sort(flist)
+        sort_files(flist,params[:skip_final_check].nil?)
       end
     elsif params[:action]=="add"
-      flist.each do |v|
-        dir_name=v
-            .sub(/[@ \r\n\t]*(\[.*\]_‘æ\d+˜b.*)?$/,'')
-            .sub(/^[@ \r\n\t]*/,'').strip 
-        columns={}
-        columns[:name]=dir_name
-        TvList.create(columns.merge({status_id: 4}))
-      end
+      add_lists(flist)
     end
 
-    @list=tv_flist
 
     slim :tv
 
