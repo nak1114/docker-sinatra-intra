@@ -4,8 +4,10 @@ require 'sinatra/base'
 require 'sinatra/reloader'
 require 'sinatra/cross_origin'
 require 'sinatra/activerecord'
+require 'sinatra-websocket'
 require 'will_paginate/view_helpers/sinatra'
 require 'will_paginate/active_record'
+
 require 'cgi'
 require 'levenshtein'
 
@@ -21,13 +23,16 @@ class MyAppRoute::TVList < Sinatra::Base
   configure do
     helpers MyAppHelper::HTML
     helpers MyAppHelper::TvList
-    helpers WillPaginate::Sinatra, WillPaginate::Sinatra::Helpers
+    #helpers WillPaginate::Sinatra, WillPaginate::Sinatra::Helpers
 
     register Sinatra::CrossOrigin
 
     enable :cross_origin
     set :allow_origin, :any
     set :allow_methods, [:get, :post, :options]
+
+    set :sockets, []
+
   end
   configure :development do
     register Sinatra::Reloader
@@ -71,10 +76,38 @@ class MyAppRoute::TVList < Sinatra::Base
 
   get '/tv' do
     
-    @pa= params.to_s
+    @pa= ""
     @list=tv_flist
 
     slim :tv
+  end
+
+  get '/tv/websocket.ws' do
+    if request.websocket?
+      request.websocket do |ws|
+        ws.onopen do
+          settings.sockets << ws
+          #ws.send(@@messages.to_json)
+        end
+        ws.onmessage do |msg|
+          # p settings.sockets
+          json = JSON.parse msg
+          case json['action']
+          when 'add'
+            t = Thread.new do
+              #tr2zip(@@mutex,@@messages,json) unless @@messages[0]
+            end
+          when 'sort'
+            t = Thread.new do
+              #zip2zip(@@mutex,@@messages,json) unless @@messages[1]
+            end
+          end
+        end
+        ws.onclose do
+          settings.sockets.delete(ws)
+        end
+      end
+    end
   end
 
   after do

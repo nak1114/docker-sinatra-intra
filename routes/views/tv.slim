@@ -9,11 +9,13 @@ text 　
 text 　
 == link_to('/tv/list','リスト一覧')
 br
-div ほげ
-div = @pa
-form method='POST'
-  button type='submit' name='action' value='add' 追加
-  button type='submit' name='action' value='sort' フォルダ分け
+div#message = @pa
+form#form1 method='POST'
+  button#btn_add type='submit' name='action' value='add' 追加
+  text 　
+  button#btn_sort type='submit' name='action' value='sort' フォルダ分け
+  text 　
+  input type="checkbox" name="skip_final_check" 最終回チェックをスキップする
   table
     thead
       tr
@@ -28,5 +30,46 @@ br
 == link_to('/','ホームへ戻る')
 
 javascript: 
-  var copy_name=function (id){
-  }
+  (function (){
+    var init=function (){
+      var message=document.getElementById("message");
+      var form=document.getElementById("form1");
+      var btn_add=document.getElementById("btn_add");
+      var btn_sort=document.getElementById("btn_sort");
+      var ws = new WebSocket('wss://' + window.location.host + "/tv/websocket.ws");
+      var timer_id=undefined;
+      
+      function dummy_msg(){
+        ws.send('{}');
+      }
+
+      ws.onopen = function() { 
+        console.log("connection opened");
+        if(timer_id==undefined){
+          timer_id=setInterval(dummy_msg,20000);
+        }
+      }
+      ws.onclose = function() { 
+        console.log("connection closed");
+        //setTimeout(function() {connect();}, 1000);
+        if(timer_id!=undefined){
+          clearInterval(timer_id);
+          timer_id=undefined;
+        }
+      }
+      ws.onmessage = function(m) {
+        console.log(m);
+        var v=JSON.parse(m.data);
+        switch (v['action']){
+          case 'init':
+            //msg1.textContent=' '+v['complete']+'/'+v['total'];
+          break;
+          case 'add':
+            message.innerHTML+=v['body']
+            //msg1.textContent=' '+v['complete']+'/'+v['total'];
+          break;
+        }
+      }
+    }
+    window.onload=init;
+  })();
