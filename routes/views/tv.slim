@@ -2,20 +2,18 @@ link rel="stylesheet" type="text/css" href="/table.css"
 
 h2 TVList
 
-br
-== link_to('/tv?sort=name','名前順')
-text 　
-== link_to('/tv','時間順')
-text 　
-== link_to('/tv/list','リスト一覧')
-br
+p
+  == link_to('/tv?sort=name','名前順')
+  == link_to('/tv','時間順')
+  == link_to('/tv/list','リスト一覧')
 div#message = @pa
 form#form1 method='POST'
-  button#btn_add type='submit' name='action' value='add' 追加
-  text 　
-  button#btn_sort type='submit' name='action' value='sort' フォルダ分け
-  text 　
-  input type="checkbox" name="skip_final_check" 最終回チェックをスキップする
+  p
+    button#btn_add type='submit' name='action' value='add' 追加
+    button#btn_move type='submit' name='action' value='move' 移動
+    button#btn_sort type='submit' name='action' value='sort' フォルダ分け
+    label
+      input type="checkbox" name="skip_final_check" 最終回チェックをスキップする
   table
     thead
       tr
@@ -23,8 +21,9 @@ form#form1 method='POST'
     tbody
       - @list.each do |filename|
         tr 
-          td.page_name.left   
-            input type="checkbox" name="list[]" value="#{CGI.escape(filename)}"  = filename
+          td.page_name.left
+            label
+              input type="checkbox" name="list[]" value="#{CGI.escape(filename)}"  = filename
 
 br
 == link_to('/','ホームへ戻る')
@@ -33,9 +32,6 @@ javascript:
   (function (){
     var init=function (){
       var message=document.getElementById("message");
-      var form=document.getElementById("form1");
-      var btn_add=document.getElementById("btn_add");
-      var btn_sort=document.getElementById("btn_sort");
       var ws = new WebSocket('wss://' + window.location.host + "/tv/websocket.ws");
       var timer_id=undefined;
       
@@ -61,12 +57,8 @@ javascript:
         console.log(m);
         var v=JSON.parse(m.data);
         switch (v['action']){
-          case 'init':
-            //msg1.textContent=' '+v['complete']+'/'+v['total'];
-          break;
           case 'add':
             message.innerHTML+=v['body']
-            //msg1.textContent=' '+v['complete']+'/'+v['total'];
           break;
         }
       }

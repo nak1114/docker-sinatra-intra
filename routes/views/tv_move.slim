@@ -1,0 +1,40 @@
+link rel="stylesheet" type="text/css" href="/table.css"
+
+h2 TVList
+
+p
+  == link_to('/tv?sort=name','名前順')
+  == link_to('/tv','時間順')
+  == link_to('/tv/list','リスト一覧')
+div#message = @pa
+form#form1 method='POST' action="/tv/move"
+  p
+    button#btn_add type='submit' name='action' value='add' 移動
+  table
+    thead
+      tr
+        th 移動先
+    tbody
+      - @dirs.each do |filename|
+        tr 
+          td.dir_name.left
+            label
+              input type="radio" name="dir" value="#{CGI.escape(filename)}"  = filename
+  br
+  table
+    thead
+      tr
+        th 移動ファイル
+    tbody
+      - @flist.each do |filename|
+        tr 
+          td.file_name.left
+            input type="hidden" name="files[]" value="#{CGI.escape(filename)}"  = filename
+
+br
+
+== link_to('/','ホームへ戻る')
+
+javascript: 
+  (function (){
+  })();

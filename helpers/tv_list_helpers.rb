@@ -8,7 +8,8 @@ module MyAppHelper::TvList
   SortedDir=%q'/unsort/aaa/' #to
   UnsortDir=%q'/unsort/' #from
   RenameDir=%q'/unsort/_comp/_end/_move/'
-
+  AppendDir=["_その他","_その他/単発/アニメ1話","_その他/単発/単発・アニメ","_その他/単発/単発・教養","_その他/単発/単発・ドラマ","_その他/単発/分類不能"]
+  
   ServiceName={
     "BSジャパン" => "BS Japan" ,
     "NHKBSプレミアム" => "NHK BSプレミアム",

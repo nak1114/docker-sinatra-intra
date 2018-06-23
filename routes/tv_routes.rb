@@ -39,7 +39,24 @@ class MyAppRoute::TVList < Sinatra::Base
     also_reload '/myapp/**/*.rb'
   end
 
-
+  post '/tv/move' do
+    t = Thread.new do
+      if params[:dir]
+        flist=params[:files].map{|v| CGI.unescape(v)}
+        dstDir=SortedDir+CGI.unescape(params[:dir])+"/"
+        FileUtils.mkdir_p(dstDir) unless Dir.exist?(dstDir)
+        flist.each do |fname|
+          FileUtils.mv(UnsortDir+fname+'.ts',dstDir)
+        end
+        sleep 1
+        info "ˆÚ“®Š®—¹"
+      else
+        sleep 1
+        info "ˆÚ“®æ‚È‚µ"
+      end
+    end
+    redirect to("/tv")
+  end
   post '/tv' do
     @pa= ""
     @list=tv_flist
@@ -49,6 +66,9 @@ class MyAppRoute::TVList < Sinatra::Base
       t = Thread.new do
         sort_files(@flist,params[:skip_final_check].nil?)
       end
+    elsif params[:action]=="move" && params[:list]
+      @dirs=AppendDir + TvList.where(status_id: 4).order(updated_at: :desc).map{|v|v.name}
+      return slim :tv_move
     elsif params[:action]=="add"
       add_lists(@flist)
     end
