@@ -41,21 +41,17 @@ class MyAppRoute::TVList < Sinatra::Base
 
 
   post '/tv' do
-    @pa= params
+    @pa= ""
     @list=tv_flist
-    flist=[]
-    if params[:list]
-      flist=params[:list].map{|v| CGI.unescape(v)}
-    end
+    @flist=(params[:list]||[]).map{|v| CGI.unescape(v)}
 
     if params[:action]=="sort"
       t = Thread.new do
-        sort_files(flist,params[:skip_final_check].nil?)
+        sort_files(@flist,params[:skip_final_check].nil?)
       end
     elsif params[:action]=="add"
-      add_lists(flist)
+      add_lists(@flist)
     end
-
 
     slim :tv
 
@@ -88,10 +84,6 @@ class MyAppRoute::TVList < Sinatra::Base
           when 'add'
             t = Thread.new do
               #tr2zip(@@mutex,@@messages,json) unless @@messages[0]
-            end
-          when 'sort'
-            t = Thread.new do
-              #zip2zip(@@mutex,@@messages,json) unless @@messages[1]
             end
           end
         end
