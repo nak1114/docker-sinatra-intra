@@ -2,14 +2,10 @@ link rel="stylesheet" type="text/css" href="/table.css"
 
 h2 TVList
 
-br
-== link_to('/tv?sort=name','名前順')
-text 　
-== link_to('/tv','時間順')
-text 　
-== link_to('/tv/list','リスト一覧')
-br
-div ほげ
+p
+  == link_to('/tv?sort=name','名前順')
+  == link_to('/tv','時間順')
+  == link_to('/tv/list','リスト一覧')
 div = @pa
 form method='POST'
   table
