@@ -72,6 +72,92 @@ class MyAppRoute::TrList < Sinatra::Base
   get '/tr/message' do
     slim :tr_message
   end
+
+  post '/tr2' do
+    body = request.body.read
+    params= JSON.parse body
+    if TrList.exists?(url: params['url'])
+      error( {
+        status: '【URL重複】',
+        title: params['name'],
+        url: params['url'],
+      })
+      return {
+        warn: '重複',
+        status: 'URL重複',
+        title: params['name'],
+        url: params['url'],
+      }.to_json
+    end
+    t = Thread.new do
+      settings.sender_mutex.synchronize {
+        settings.thread_counter+=1
+      }
+      debug( {
+        status: '【追加】',
+        title: params['name'],
+        url: params['url'],
+      })
+      settings.thread_mutex.lock
+      begin
+        if TrList.exists?(url: params['url'])
+          error( {
+            status: '【URL重複】',
+            title: params['name'],
+            url: params['url'],
+          })
+        else
+          ret=dl_tr(params['url'])
+          columns={}
+          columns[:url]=params['url']
+          columns[:name]=ret[:code] || ret[:ename]
+          columns[:rename]=ret[:jname] if ret[:jname]
+          columns[:created_at]=ret[:utile] if ret[:utile]
+          case ret[:action]
+          when :site_err
+            TrList.create(columns.merge({status_id: 2}))
+            error( {
+              status: 'Site_エラー:' + ret[:code],
+              title: params['name'],
+              url: params['url'],
+            })
+          when :no_name
+            TrList.create(columns.merge({status_id: 4}))
+            error( {
+              status: '日本語タイトルなし',
+              title: ret[:ename],
+              url: params['url'],
+            })
+          when :dup
+            TrList.create(columns.merge({status_id: 5}))
+            error( {
+              status: '重複タイトル',
+              title: ret[:ename],
+              url: params['url'],
+            })
+          when :ok
+            TrList.create(columns.merge({status_id: 1}))
+            info( {
+              status: '下戴',
+              title: ret[:ename],
+              url: params['url'],
+            })
+          end
+        end
+      ensure
+        settings.sender_mutex.synchronize {
+          settings.thread_counter-=1
+        }
+        settings.thread_mutex.unlock
+      end
+    end#thread
+    return {
+      status: '受け取り',
+      title: params['name'],
+      url: params['url'],
+    }.to_json
+end
+
   post '/tr' do
     body = request.body.read
     params= JSON.parse body

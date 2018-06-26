@@ -6,6 +6,29 @@ module MyAppHelper::TrList
   Tr_username=ENV['TR_USERNAME']
   Tr_password=ENV['TR_PASSWORD']
   Tr_dir='/dl/tr/'
+  @@sender_mutex=Mutex.new
+
+  def senddata(message,type)
+    data={
+      action: "add",
+      body: %Q!<p class="#{type}">#{message[:status]} : #{message[:title]}</p>!,
+      count: settings.thread_counter,
+    }
+    @@sender_mutex.synchronize {
+      settings.sockets.each do |s|
+        s.send(data.to_json)
+      end
+    }
+  end
+  def info(message)
+    senddata(message,"info")
+  end
+  def debug(message)
+    senddata(message,"debug")
+  end
+  def error(message)
+    senddata(message,"error")
+  end
 
   def dl_tr(url,name='')
     browser = Mechanize.new
