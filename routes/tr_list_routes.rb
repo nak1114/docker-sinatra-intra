@@ -6,6 +6,9 @@ require 'sinatra/cross_origin'
 require 'sinatra/activerecord'
 require 'will_paginate/view_helpers/sinatra'
 require 'will_paginate/active_record'
+require 'sinatra-websocket'
+
+require 'pp'
 
 require_relative '../helpers/html_helpers'
 require_relative '../helpers/tr_list_helpers'
@@ -22,7 +25,15 @@ class MyAppRoute::TrList < Sinatra::Base
     enable :cross_origin
     set :allow_origin, :any
     set :allow_methods, [:get, :post, :options]
+
+    set :sockets, []
+
+    set :thread_mutex, Mutex.new
+    set :sender_mutex, Mutex.new
+    set :thread_counter, 0
+
   end
+
   configure :development do
     register Sinatra::Reloader
     also_reload '/myapp/**/*.rb'
@@ -34,6 +45,33 @@ class MyAppRoute::TrList < Sinatra::Base
     slim :tr
   end
 
+  get '/tr/websocket.ws' do
+    if request.websocket?
+      request.websocket do |ws|
+        ws.onopen do
+          settings.sockets << ws
+          #ws.send(@@messages.to_json)
+        end
+        ws.onmessage do |msg|
+          # p settings.sockets
+          json = JSON.parse msg
+          case json['action']
+          when 'add'
+            t = Thread.new do
+              #tr2zip(@@mutex,@@messages,json) unless @@messages[0]
+            end
+          end
+        end
+        ws.onclose do
+          settings.sockets.delete(ws)
+        end
+      end
+    end
+  end
+
+  get '/tr/message' do
+    slim :tr_message
+  end
   post '/tr' do
     body = request.body.read
     params= JSON.parse body

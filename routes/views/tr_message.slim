@@ -1,0 +1,60 @@
+link rel="stylesheet" type="text/css" href="/table.css"
+
+h2 TrMessage
+
+div#counter
+div#info
+div#message = @pa
+
+br
+== link_to('/','ホームへ戻る')
+
+javascript: 
+  (function (){
+    var info_queue=["<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>","<p/>"]
+    
+    var init=function (){
+      var counter=document.getElementById("counter");
+      var info=document.getElementById("info");
+      var error=document.getElementById("error");
+      var ws = new WebSocket('wss://' + window.location.host + "/tr/websocket.ws");
+      var timer_id=undefined;
+      
+      function dummy_msg(){
+        ws.send('{}');
+      }
+
+      ws.onopen = function() { 
+        console.log("connection opened");
+        if(timer_id==undefined){
+          timer_id=setInterval(dummy_msg,20000);
+        }
+      }
+      ws.onclose = function() { 
+        console.log("connection closed");
+        //setTimeout(function() {connect();}, 1000);
+        if(timer_id!=undefined){
+          clearInterval(timer_id);
+          timer_id=undefined;
+        }
+      }
+      ws.onmessage = function(m) {
+        var v=JSON.parse(m.data);
+        switch (v['action']){
+          case 'count':
+            counter.innerText=v['count']
+          case 'add':
+            counter.innerText=v['count']
+            info_queue.unshift(v['body'])
+            info_queue.pop()
+            info.innerHTML=""
+            info_queue.forEach(function(v){
+              info.innerHTML+=v
+            })
+          break;
+        }
+        console.log(v,info_queue)
+      }
+    }
+    window.onload=init;
+  })();
