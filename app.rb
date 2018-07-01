@@ -39,8 +39,8 @@ require_relative './routes/tv_routes'
 require 'pp'
 
 class String
-  Tr_src="\\\\/:*?\"<>|\t"
-  Tr_dst=%(￥／：＊？”＜＞｜)+" "
+  Tr_src="\\\\/:*?\"<>|'`\t"
+  Tr_dst=%(￥／：＊？”＜＞｜’‘)+" "
   def cut_byte(len=225)
     pstr=self
     while pstr.bytesize >len
