@@ -25,8 +25,15 @@ p
   
 javascript:
   (function (){
+
+    var change_dirinfo=function(v){
+      var input1=document.getElementById("input1");
+      var cnt1=document.getElementById("cnt1");
+      input1.value=v["dir"];
+      cnt1.textContent='('+v["trcount"]+')->('+v["count"]+')';
+    }
+
     var dirinfo=function(v){
-      console.log(v);
       var input1=document.getElementById("input1");
       var list1=document.getElementById("list1");
       var cnt1=document.getElementById("cnt1");
@@ -58,6 +65,7 @@ javascript:
       cnt2.textContent='('+v["pdfcount"]+')->('+val["count"]+')';
     }
     var connect = function(){
+      var input1=document.getElementById("input1");
       var msg1=document.getElementById("msg1");
       var msg2=document.getElementById("msg2");
       var btn1=document.getElementById("app1");
@@ -98,11 +106,20 @@ javascript:
               case 'dirinfo':
                 dirinfo(v);
               break;
+              case 'trdir':
+                change_dirinfo(v);
+              break;
             }
           }
         });
       }
 
+      input1.onchange = function(){
+        var list=document.getElementById("input1");
+        var msg={action: "trdir",dir: input1.value}
+        ws.send(JSON.stringify(msg));
+        return false;
+      }
       btn1.onclick = function(){
         var list=document.getElementById("input1");
         var msg={action: "tr",dir: list.value}

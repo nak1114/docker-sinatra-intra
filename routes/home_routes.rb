@@ -56,6 +56,8 @@ class MyAppRoute::Home < Sinatra::Base
             t = Thread.new do
               tr2zip(@@mutex,@@messages,json) unless @@messages[0]
             end
+          when 'trdir'
+            change_dirinfo(@@mutex,@@messages,json)
           when 'pdf'
             t = Thread.new do
               zip2zip(@@mutex,@@messages,json) unless @@messages[1]

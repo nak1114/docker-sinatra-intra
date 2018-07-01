@@ -12,14 +12,29 @@ module MyAppHelper::Home
 
   @@dirinfo={}
 
+  def change_dirinfo(mutex,messages,arg)
+    dirname=arg["dir"]||"19990101"
+    data=[{
+      action: 'trdir',
+      dir: dirname,
+      trcount: Dir.glob(Tr_glob_dir+"*/").count,
+      count: Dir.glob(Cmn_dest_dir+dirname+'/*.zip').count,
+    }]
+    mutex.synchronize {
+      settings.sockets.each do |s|
+        s.send(data.to_json)
+      end
+    }
+  end
+
   def get_dirinfo
     t=Dir.glob(Cmn_dest_dir+"*/").sort.reverse[0...15].map{|v| {dir: v[/\/([^\/]+)\/\z/,1],count: Dir.glob(v+'*.zip').count}}
     @@dirinfo[:action]='dirinfo'
-    @@dirinfo[:trcur]=t.index{|v| /\d\z/.match?(v[:dir])}||0
-    @@dirinfo[:pdfcur]=t.index{|v| /_pdf\z/.match?(v[:dir])}||0
     @@dirinfo[:data]=t
-    @@dirinfo[:trcount]=Dir.glob(Tr_glob_dir+"*/").count
-    @@dirinfo[:pdfcount]=Dir.glob(Pdf_glob_dir+"*/").count
+    @@dirinfo[:trcur   ]=t.index{|v| /\d\z/.match?(v[:dir])}||0
+    @@dirinfo[:trcount ]=Dir.glob(Tr_glob_dir+"*/").count
+    @@dirinfo[:pdfcur  ]=0#t.index{|v| /_pdf\z/.match?(v[:dir])}||0
+    @@dirinfo[:pdfcount]=0#Dir.glob(Pdf_glob_dir+"*/").count
     @@dirinfo
   end
 
