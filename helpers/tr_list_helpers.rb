@@ -32,7 +32,7 @@ module MyAppHelper::TrList
 
   def dl_tr(url,name='')
     browser = Mechanize.new
-    browser.user_agent_alias = 'Windows IE 9'
+    browser.user_agent_alias = 'Windows IE 11'
     browser.verify_mode = OpenSSL::SSL::VERIFY_NONE
     browser.cookie_jar.load Tr_cookie_path if File.exist? Tr_cookie_path
       pg=browser.get(url)
