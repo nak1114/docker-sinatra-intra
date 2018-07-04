@@ -221,31 +221,32 @@ end
     when :site_err
       page.update(colums.merge({status_id: 2}))
       return {
-        error:  'エラー',
+        status: 'error',
         message: 'サイトエラー;'+ret[:code],
       }.to_json
     when :no_name
       page.update(colums.merge({status_id: 4}))
       return {
-        error:  'エラー',
+        status: 'error',
         message: "名前が無効:#{ret[:ename]} : "+ret[:jname],
       }.to_json
     when :dup
       page.update(colums.merge({status_id: 5}))
       return {
-        error:  'エラー',
+        status: 'error',
         message: '同名ファイルがあるため更新だけ完了、ダウンロード未完了;'+ret[:jname],
         rename: ret[:jname]
       }.to_json
     when :ok
       page.update(colums.merge({status_id: 1}))
       return {
+        status: 'complete',
         message: '完了！'+ret[:jname],
         rename: ret[:jname]
       }.to_json
     end
     return {
-      error:  'エラー',
+      status: 'error',
       message: '不明なエラー！',
     }.to_json
   end

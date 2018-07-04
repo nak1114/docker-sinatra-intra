@@ -64,8 +64,9 @@ javascript:
       return(res.json());
     })
     .then(function (res) {
-      var tr=document.querySelector('#notify');
-      tr.textContent=res.message;
+      var mes=document.querySelector('#notify');
+      tr.classList.add(res.status);
+      mes.textContent=res.message;
     })
     .catch(function (error) {
       alert(error);

@@ -82,3 +82,15 @@ tr:hover {
   background: #bbd4ee;
   cursor:pointer;
 }
+tr.error {
+  background: rgb(255, 128, 128);
+}
+tr.error:nth-child(2n+1) {
+  background: rgb(255, 64, 64);
+}
+tr.complete {
+  background: rgb(128, 255, 128);
+}
+tr.complete:nth-child(2n+1) {
+  background: rgb(64, 255, 64);
+}
