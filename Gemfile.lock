@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/nak1114/ariblib.git
-  revision: 57202559cce15013b1b13e78715c8dd91a092209
+  revision: d9a85e7b37f4ebfced17ef0aaf6460f52cb19a2c
   specs:
-    ariblib (0.1.0)
+    ariblib (0.1.1)
 
 GEM
   remote: https://rubygems.org/
@@ -55,11 +55,11 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     mustermann (1.0.2)
-    mysql2 (0.5.1)
+    mysql2 (0.5.2)
     net-http-digest_auth (1.4.1)
     net-http-persistent (3.0.0)
       connection_pool (~> 2.2)
-    nokogiri (1.8.3)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     ntlm-http (0.1.1)
     pry (0.11.3)
