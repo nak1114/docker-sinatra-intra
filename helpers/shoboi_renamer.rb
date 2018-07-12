@@ -136,7 +136,8 @@ class ShoboiRenamer
           "query2:#{q2}"
         next
       end
-      str="#{File.dirname(fname)}/#{title.to_file} [#{ch.to_file}]_第#{format('%02d',count)}話 「#{stitle[1].to_file}」.ts"
+      filebody="#{title} [#{ch}]_第#{format('%02d',count)}話 「#{stitle[1]}」".to_file.cut_byte
+      str="#{File.dirname(fname)}/#{filebody}.ts"
       if FlgRename and not File.exist?(str)
         info "renamed:\nsrc:#{fname}\ndst:#{str}"
         File.rename(fname,str)
