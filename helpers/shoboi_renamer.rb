@@ -53,35 +53,36 @@ class ShoboiRenamer
   end
 
   def parse_ts_file(fname)
-      ts = Ariblib::TransportStreamFile.new(fname,{
-        0x0014 => Ariblib::TimeOffsetTable.new,
-        0x0010 => Ariblib::NetworkInformationTable.new,
-        0x0011 => Ariblib::ServiceDescriptionTable.new})
-      name=nil
-      time=nil
-      while(name==nil || time==nil) do
-        if name==nil && ts.payload[0x11].contents.size > 0
-          t=ts.payload[0x11].contents.shift
-          if t[0][0]==0x42 && t.size > 0
-            if t[1][1][:service_provider_name].size >0
-              name=t[1][1][:service_name] #for BS
-            end
+    ts = Ariblib::TransportStreamFile.new(fname,{
+      0x0014 => Ariblib::TimeOffsetTable.new,
+      0x0010 => Ariblib::NetworkInformationTable.new,
+      0x0011 => Ariblib::ServiceDescriptionTable.new})
+    name=nil
+    time=nil
+    while(name==nil || time==nil) do
+      if name==nil && ts.payload[0x11].contents.size > 0
+        t=ts.payload[0x11].contents.shift
+        if t[0][0]==0x42 && t.size > 0
+          if t[1][1][:service_provider_name].size >0
+            name=t[1][1][:service_name] #for BS
           end
         end
-        if name==nil && ts.payload[0x10].contents.size > 0
-          t=ts.payload[0x10].contents.shift
-          if t[0][1]==0x40 && t.size > 0
-            name=t[1][2][:TS_name] #for 地上波
-          end
-        end
-        if time==nil && ts.payload[0x14].contents.size > 0
-          time=(ts.payload[0x14].to_datetime+RecMargin).strftime("%Y%m%d_%H%M00-%Y%m%d_%H%M01")
-          ts.payload[0x14].contents.delete_at(0)
-        end
-        break unless ts.transport_packet
       end
-      ts.close
-      [name.tr("０-９Ａ-Ｚａ-ｚ　", "0-9A-Za-z "),time]
+      if name==nil && ts.payload[0x10].contents.size > 0
+        t=ts.payload[0x10].contents.shift
+        if t[0][1]==0x40 && t.size > 0
+          name=t[1][2][:TS_name] #for 地上波
+        end
+      end
+      if time==nil && ts.payload[0x14].contents.size > 0
+        time=(ts.payload[0x14].to_datetime+RecMargin).strftime("%Y%m%d_%H%M00-%Y%m%d_%H%M01")
+        ts.payload[0x14].contents.delete_at(0)
+      end
+      break unless ts.transport_packet
+    end
+    ts.close
+    name = name.tr("０-９Ａ-Ｚａ-ｚ　", "0-9A-Za-z ") if name
+    [name,time]
   end
 
   def rename_title(dir_name)
